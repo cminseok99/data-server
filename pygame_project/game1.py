@@ -66,7 +66,7 @@ weapon_width = weapon_size[0]
 weapon_height = weapon_size[1]
 
 # 무기 제한 관련 변수
-max_shots = 31  # 최대 발사 횟수
+max_shots = 100  # 최대 발사 횟수
 shot_count = 0  # 현재까지 발사한 횟수
 last_shot_time = 0  # 마지막으로 무기를 발사한 시간
 weapon_cooldown = 500  # 무기 발사 간격 (ms) 2초에 1번씩
@@ -200,6 +200,47 @@ while run:
 pygame.time.delay(500)
 
 
+def next_stage():
+    global max_shots
+      # 다음 스테이지 레벨로 업데이트
+    max_shots -= 20  # 무기 발사 횟수 감소
+    initialize_stage()
+    create_ball()
+
+def initialize_stage():
+    global balls, weapons, shot_count, last_shot_time
+    balls = []
+    weapons = []
+    last_shot_time = 0
+    shot_count = 0
+
+    main_menu = MainMenu()
+    run = True
+    while run:
+        menu_result = main_menu.show()
+        if menu_result == "start":
+            # 시작 화면에서 시간을 반환하고 카운트다운 시작
+            run = False
+            
+
+        elif menu_result == "exit":
+            pygame.quit()
+            sys.exit()
+        
+
+def create_ball():
+    delay = 1200
+    pygame.time.set_timer(delay, 1000)
+    if len(balls) == 0:
+        ball_x_pos = (screen_width / 2) - (100 / 2)
+        ball_y_pos = screen_height - stage_height
+        balls.append({
+            "pos_x": ball_x_pos,  # 공의 x 좌표
+            "pos_y": ball_y_pos,  # 공의 y 좌표
+            "img_idx": 0,  # 공의 이미지 인덱스
+            "to_x": 3,  # x축 이동방향 -3이면 왼쪽으로 , 3이면 오른쪽으로
+            "to_y": -6,  # y축 이동방향,
+            "init_spd_y": ball_speed_y[0]})  # y 최초 속도
 
 
 
@@ -244,7 +285,7 @@ while running_countdown:
 try:
     while running:
         
-        dt = clock.tick(30) # 게임화면의 초당 프레임 수를 설정
+        dt = clock.tick(15) # 게임화면의 초당 프레임 수를 설정
 
     # 2. 이벤트 처리 (키보드,마우스 등)
         for event in pygame.event.get():  
@@ -410,7 +451,8 @@ try:
         # 모든 공을 없앤 경우 게임 종료(성공)
         if len(balls) == 0:
             game_result = "Mission Complete"
-            running = False
+            running = True
+            next_stage()
     
     
         # 5.화면에 그리기
