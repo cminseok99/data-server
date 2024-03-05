@@ -4,6 +4,8 @@
 
 
 import pygame,os,sys,logging
+
+from stage2 import initialize_stage
 ###################################################################
 
 
@@ -207,26 +209,7 @@ def next_stage():
     initialize_stage()
     create_ball()
 
-def initialize_stage():
-    global balls, weapons, shot_count, last_shot_time
-    balls = []
-    weapons = []
-    last_shot_time = 0
-    shot_count = 0
 
-    main_menu = MainMenu()
-    run = True
-    while run:
-        menu_result = main_menu.show()
-        if menu_result == "start":
-            # 시작 화면에서 시간을 반환하고 카운트다운 시작
-            run = False
-            
-
-        elif menu_result == "exit":
-            pygame.quit()
-            sys.exit()
-        
 
 def create_ball():
     delay = 1200
@@ -449,7 +432,7 @@ try:
             weapon_to_remove = -1
 
         # 모든 공을 없앤 경우 게임 종료(성공)
-        if len(balls) == 0:
+        if len(balls) == 2:
             game_result = "Mission Complete"
             running = True
             next_stage()
